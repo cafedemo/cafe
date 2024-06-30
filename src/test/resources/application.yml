@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    datasource:
+      username: postgres
+      password: postgres

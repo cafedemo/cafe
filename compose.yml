@@ -1,0 +1,61 @@
+services:
+  db:
+    image: dushyantsopra/postgres:lcl-16
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: test123
+      POSTGRES_USER: admin
+      POSTGRES_DB: cafedb
+    ports:
+      - "5432:5432"
+    networks:
+      - cafe-network
+  prometheus:
+    image: prom/prometheus:v2.45.6
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - cafe-network
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ops/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./ops/grafana/conf/datasources:/etc/grafana/provisioning/datasources:rw
+      - ./ops/grafana/conf/dashboards:/etc/grafana/provisioning/dashboards:rw
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    networks:
+      - cafe-network
+  app:
+    image: cafeapp:latest
+    container_name: cafeapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - prometheus
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cafedb
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: test123
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - cafe-network
+networks:
+    cafe-network:
+        driver: bridge

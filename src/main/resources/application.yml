@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cafedb
+    username: admin
+    password: test123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: always
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+  server:
+    port: 8081
+  prometheus:
+    metrics:
+      export:
+        enabled: true

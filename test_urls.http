@@ -1,0 +1,32 @@
+#### Test: Get All Customers
+
+GET http://localhost:8080/customers
+
+#### Test: Add Customer
+
+POST http://localhost:8080/customers
+Content-Type: application/json
+
+{
+    "name": "John Doe1",
+    "email": "john.doe@example.com"
+}
+
+#### Test: Get Customer
+
+GET http://localhost:8080/customers/3
+
+#### Test: Update Customer
+
+PUT http://localhost:8080/customers
+Content-Type: application/json
+
+{
+    "id": 3,
+    "name": "John Doe1",
+    "email": "test@example.com"
+}
+
+#### Test: Delete Customer
+
+DELETE http://localhost:8080/customers/3
